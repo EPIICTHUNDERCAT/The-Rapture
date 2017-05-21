@@ -75,7 +75,7 @@ public class TheRaptureHandler {
 		BlockPos spawnPoint = world.getSpawnPoint();
 		int current = world.countEntities(EntityLightningBolt.class);
 		int current1 = world.countEntities(EntityFallenAngel.class);
-		int max = 1 * chunks;
+		int max = 10 * chunks;
 
 		for (ChunkPos chunkcoordintpair : eligibleChunksForSpawning) {
 			if (current > max)
@@ -83,7 +83,7 @@ public class TheRaptureHandler {
 			if (current1 > max)
 				break;
 
-			if (world.rand.nextFloat() < 0.0001f) {
+			if (world.rand.nextFloat() < 0.1f) {
 				BlockPos blockpos = getRandomChunkPosition(world, chunkcoordintpair.chunkXPos,
 						chunkcoordintpair.chunkZPos);
 				BlockPos waterBlock = null;

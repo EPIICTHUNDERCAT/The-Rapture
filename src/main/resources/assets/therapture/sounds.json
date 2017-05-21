@@ -2,16 +2,16 @@
 	"fallen_angel_hurt":
 	{
 	"category": "neutral",
-	"sounds": [ "naturesgift:fallen_angel_hurt" ]
+	"sounds": [ "therapture:fallen_angel_hurt" ]
 	},
 	"fallen_angel_ambient":
 	{
 	"category": "neutral",
-	"sounds": [ "naturesgift:fallen_angel_ambient" ]
+	"sounds": [ "therapture:fallen_angel_ambient" ]
 	},
 	"fallen_angel_death":
 	{
 	"category": "neutral",
-	"sounds":[ "naturesgift:fallen_angel_death"]
+	"sounds":[ "therapture:fallen_angel_death"]
 	}
 }
