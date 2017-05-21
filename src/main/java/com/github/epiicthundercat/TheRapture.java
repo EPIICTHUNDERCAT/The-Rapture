@@ -24,6 +24,7 @@ public class TheRapture {
 	@EventHandler
 	private void preInit(FMLPreInitializationEvent preEvent) {
 		proxy.preInit(preEvent);
+		
 	}
 
 	@EventHandler

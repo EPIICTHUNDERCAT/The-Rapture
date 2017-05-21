@@ -2,6 +2,7 @@ package com.github.epiicthundercat.proxy;
 
 import com.github.epiicthundercat.init.TRItems;
 import com.github.epiicthundercat.init.TheRaptureHandler;
+import com.github.epiicthundercat.init.TheRaptureSoundHandler;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -11,6 +12,7 @@ public class CommonProxy {
 
 	public void preInit(FMLPreInitializationEvent preEvent) {
 		register(preEvent);
+		TheRaptureSoundHandler.INSTANCE.onInit();
 		//NGConfig.config(preEvent);
 
 	}
