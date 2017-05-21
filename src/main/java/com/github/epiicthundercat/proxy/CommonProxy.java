@@ -1,7 +1,9 @@
 package com.github.epiicthundercat.proxy;
 
 import com.github.epiicthundercat.init.TRItems;
+import com.github.epiicthundercat.init.TheRaptureHandler;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
@@ -24,7 +26,7 @@ public class CommonProxy {
 	//	SRecipes.register(preEvent);
 		
 		//SBlocks.register(preEvent);
-		//MinecraftForge.EVENT_BUS.register(new SMobDrops());
+		MinecraftForge.EVENT_BUS.register(new TheRaptureHandler());
 		//MinecraftForge.EVENT_BUS.register(new SEventHandler());
 		
 
