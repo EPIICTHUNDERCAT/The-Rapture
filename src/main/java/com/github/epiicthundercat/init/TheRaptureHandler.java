@@ -13,7 +13,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.network.play.server.SPacketSoundEffect;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -37,15 +36,14 @@ public class TheRaptureHandler {
 	@SubscribeEvent
 	public void onTick(TickEvent.WorldTickEvent event) {
 		World world = event.world;
-		for(Entity e : world.loadedEntityList) {
-			if(e instanceof EntityPlayerMP)
-			{
-			        EntityPlayerMP player = (EntityPlayerMP) e;
-			player.connection.sendPacket(new SPacketSoundEffect(getSound(), SoundCategory.MASTER, player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ(), 1F, 1F));
+		for (Entity e : world.loadedEntityList) {
+			if (e instanceof EntityPlayerMP) {
+				EntityPlayerMP player = (EntityPlayerMP) e;
+				player.connection.sendPacket(new SPacketSoundEffect(getSound(), SoundCategory.MASTER,
+						player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ(), 1F, 1F));
 			}
-			}
-		
-		
+		}
+
 		if (event.phase == TickEvent.Phase.END && world.provider.getDimension() == 0) {
 			if (this.ticks % (10 * 20) == 0) {
 				Random random = new Random();
@@ -54,7 +52,7 @@ public class TheRaptureHandler {
 
 					trySpawnAngel(world);
 					System.out.println("SpawningB");
-					
+
 					break;
 
 				}
@@ -66,22 +64,18 @@ public class TheRaptureHandler {
 		}
 	}
 
-	
-	
-
-		public static SoundEvent getSound() {
+	public static SoundEvent getSound() {
 		return TheRaptureSoundHandler.THE_RAPTURE_HAS_BEGUN;
-		}
-	
-	
+	}
+
 	private void trySpawnAngel(World world) {
 		Set<ChunkPos> eligibleChunksForSpawning = Sets.newHashSet();
 		int chunks = 0;
 
 		for (EntityPlayer entityplayer : world.playerEntities)
 			if (!entityplayer.isSpectator()) {
-				int playerX = MathHelper.floor(entityplayer.posX / 16.0D);
-				int playerZ = MathHelper.floor(entityplayer.posZ / 16.0D);
+				int playerX = MathHelper.floor(entityplayer.posX / 0.0D);
+				int playerZ = MathHelper.floor(entityplayer.posZ / .0D);
 
 				for (int x = -8; x <= 8; ++x)
 					for (int z = -8; z <= 8; ++z) {
@@ -101,15 +95,15 @@ public class TheRaptureHandler {
 		BlockPos spawnPoint = world.getSpawnPoint();
 		int current = world.countEntities(EntityLightningBolt.class);
 		int current1 = world.countEntities(EntityFallenAngel.class);
-		int max = 1 * chunks / MOB_COUNT_DIV;
+		int max = 5 * chunks / MOB_COUNT_DIV;
 
 		for (ChunkPos chunkcoordintpair : eligibleChunksForSpawning) {
 			if (current > max)
 				break;
-			if (current1 > max)
-				break;
+			 if (current1 > max)
+			 break;
 
-			if (world.rand.nextFloat() < 0.01f) {
+			if (world.rand.nextFloat() < 100.01f) {
 				BlockPos blockpos = getRandomChunkPosition(world, chunkcoordintpair.chunkXPos,
 						chunkcoordintpair.chunkZPos);
 				BlockPos waterBlock = null;
@@ -121,7 +115,7 @@ public class TheRaptureHandler {
 							BlockPos check = new BlockPos(blockpos.getX() + x, blockpos.getY() + y,
 									blockpos.getZ() + z);
 							Block block = world.getBlockState(check).getBlock();
-							if (block == Blocks.AIR) {
+							if (block == Blocks.SANDSTONE) {
 								waterBlock = check;
 								break;
 							}
@@ -132,17 +126,17 @@ public class TheRaptureHandler {
 					int y = waterBlock.getY();
 					int z = waterBlock.getZ();
 
-					if (spawnPoint.distanceSq((double) x, (double) y, (double) z) >= 0.05 * 0.05) {
+					if (spawnPoint.distanceSq((double) x, (double) y, (double) z) >= 1.5 * 1.5) {
 						for (Biome allBiomes : ForgeRegistries.BIOMES.getValues()) {
 							if ((!BiomeDictionary.hasType(allBiomes, BiomeDictionary.Type.NETHER))
 									&& (!BiomeDictionary.hasType(allBiomes, BiomeDictionary.Type.END))) {
-
+								Random rand = new Random();
 								EntityLightningBolt entity = new EntityLightningBolt(world, x, y, z, false);
 								EntityFallenAngel angel = new EntityFallenAngel(world);
 								entity.setLocationAndAngles((double) x + 2.5, (double) y + 2.5, (double) z + 2.5, 0.0F,
 										0.0F);
-								angel.setLocationAndAngles((double) x + 2.5, (double) y + 3.5, (double) z + 4.5, 0.0F,
-										0.0F);
+								angel.setLocationAndAngles((double) x + 2.5, (double) y + 3.5, (double) z + 4.5, 2.0F,
+										3.0F);
 
 								// entity.setLocationAndAngles(playerx, y, z,
 								// yaw, pitch);
