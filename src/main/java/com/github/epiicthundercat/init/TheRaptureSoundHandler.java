@@ -11,6 +11,7 @@ public enum TheRaptureSoundHandler {
 	public static final SoundEvent FALLEN_ANGEL_HURT = create("fallen_angel_hurt");
 	public static final SoundEvent FALLEN_ANGEL_AMBIENT = create("fallen_angel_ambient");
 	public static final SoundEvent FALLEN_ANGEL_DEATH = create("fallen_angel_death");
+	public static final SoundEvent THE_RAPTURE_HAS_BEGUN = create("the_rapture_has_begun");
 	
 	
 	 public void onInit() {}

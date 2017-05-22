@@ -7,20 +7,28 @@ import com.github.epiicthundercat.entity.monster.EntityFallenAngel;
 import com.google.common.collect.Sets;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGameOver;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Biomes;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.client.event.GuiScreenEvent.DrawScreenEvent;
 import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TheRaptureHandler {
 	private static final int MOB_COUNT_DIV = (int) Math.pow(17.0D, 2.0D);
@@ -31,12 +39,16 @@ public class TheRaptureHandler {
 		World world = event.world;
 
 		if (event.phase == TickEvent.Phase.END && world.provider.getDimension() == 0) {
-			if (this.ticks == 20) {
+			if (this.ticks % (10 * 20) == 0) {
 				Random random = new Random();
 				switch (random.nextInt(1)) {
 				case 0:
-					System.out.println("SpawningB");
+
 					trySpawnAngel(world);
+					System.out.println("SpawningB");
+					TheRaptureAnnouncement.ScheduleNotice("The Rapture Has Begun!",
+							TheRaptureSoundHandler.THE_RAPTURE_HAS_BEGUN);
+
 					break;
 
 				}
@@ -75,7 +87,7 @@ public class TheRaptureHandler {
 		BlockPos spawnPoint = world.getSpawnPoint();
 		int current = world.countEntities(EntityLightningBolt.class);
 		int current1 = world.countEntities(EntityFallenAngel.class);
-		int max = 10 * chunks;
+		int max = 1 * chunks / MOB_COUNT_DIV;
 
 		for (ChunkPos chunkcoordintpair : eligibleChunksForSpawning) {
 			if (current > max)
@@ -83,7 +95,7 @@ public class TheRaptureHandler {
 			if (current1 > max)
 				break;
 
-			if (world.rand.nextFloat() < 0.1f) {
+			if (world.rand.nextFloat() < 0.01f) {
 				BlockPos blockpos = getRandomChunkPosition(world, chunkcoordintpair.chunkXPos,
 						chunkcoordintpair.chunkZPos);
 				BlockPos waterBlock = null;
@@ -97,7 +109,7 @@ public class TheRaptureHandler {
 							Block block = world.getBlockState(check).getBlock();
 							if (block == Blocks.AIR) {
 								waterBlock = check;
-								// break;
+								break;
 							}
 						}
 
@@ -106,18 +118,20 @@ public class TheRaptureHandler {
 					int y = waterBlock.getY();
 					int z = waterBlock.getZ();
 
-					if (spawnPoint.distanceSq((double) x, (double) y, (double) z) >= 2.0 * 2.0) {
+					if (spawnPoint.distanceSq((double) x, (double) y, (double) z) >= 0.05 * 0.05) {
 						for (Biome allBiomes : ForgeRegistries.BIOMES.getValues()) {
 							if ((!BiomeDictionary.hasType(allBiomes, BiomeDictionary.Type.NETHER))
 									&& (!BiomeDictionary.hasType(allBiomes, BiomeDictionary.Type.END))) {
 
-								EntityLightningBolt entity = new EntityLightningBolt(world, x, y, z, true);
+								EntityLightningBolt entity = new EntityLightningBolt(world, x, y, z, false);
 								EntityFallenAngel angel = new EntityFallenAngel(world);
-								entity.setLocationAndAngles((double) x + 0.5, (double) y + 0.5, (double) z + 0.5, 0.0F,
+								entity.setLocationAndAngles((double) x + 2.5, (double) y + 2.5, (double) z + 2.5, 0.0F,
 										0.0F);
-								angel.setLocationAndAngles((double) x + 0.5, (double) y + 0.5, (double) z + 0.5, 0.0F,
+								angel.setLocationAndAngles((double) x + 2.5, (double) y + 3.5, (double) z + 4.5, 0.0F,
 										0.0F);
 
+								// entity.setLocationAndAngles(playerx, y, z,
+								// yaw, pitch);
 								current++;
 
 								world.spawnEntity(entity);
@@ -140,4 +154,18 @@ public class TheRaptureHandler {
 
 		return new BlockPos(i, k, j);
 	}
+
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent
+	public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+
+		if (event.player.world == null || !event.player.world.isRemote)
+			return;
+		if (event.player.world.getWorldTime() % 1000 != 0 || event.phase == Phase.END)
+			return;
+
+		TheRaptureAnnouncement.ScheduleNotice("The Rapture Has Begun!", TheRaptureSoundHandler.THE_RAPTURE_HAS_BEGUN);
+
+	}
+
 }

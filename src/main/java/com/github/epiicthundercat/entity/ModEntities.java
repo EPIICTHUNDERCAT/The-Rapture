@@ -16,7 +16,7 @@ public class ModEntities {
 		EntityRegistry.registerModEntity(getEntityResource("FallenAngel"), EntityFallenAngel.class, "FallenAngel", 0, TheRapture.instance, 80, 3, false,
 				0xffffff, 0xd9d9d9);
 
-		EntityRegistry.addSpawn(EntityFallenAngel.class, 2, 4, 8, EnumCreatureType.CREATURE, Biomes.SKY);
+		EntityRegistry.addSpawn(EntityFallenAngel.class, 2, 1, 1, EnumCreatureType.CREATURE, Biomes.SKY);
 
 		EntitySpawnPlacementRegistry.setPlacementType(EntityFallenAngel.class, SpawnPlacementType.ON_GROUND);
 

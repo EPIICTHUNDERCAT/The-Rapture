@@ -13,5 +13,9 @@
 	{
 	"category": "neutral",
 	"sounds":[ "therapture:fallen_angel_death"]
+	},
+	{
+	"category": "neutral",
+	"sounds":[ "therapture:the_rapture_has_begun"]
 	}
 }
