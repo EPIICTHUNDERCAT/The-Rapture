@@ -59,7 +59,7 @@ public class TheRaptureHandler {
 
 					trySpawnAngel(world);
 					System.out.println("SpawningB");
-					
+					this.onDrawScreen(event);
 					break;
 
 				}
