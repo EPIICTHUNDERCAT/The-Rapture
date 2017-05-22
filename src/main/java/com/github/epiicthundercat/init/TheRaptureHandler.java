@@ -1,5 +1,6 @@
 package com.github.epiicthundercat.init;
 
+import java.awt.Color;
 import java.util.Random;
 import java.util.Set;
 
@@ -7,6 +8,13 @@ import com.github.epiicthundercat.entity.monster.EntityFallenAngel;
 import com.google.common.collect.Sets;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.GlStateManager.DestFactor;
+import net.minecraft.client.renderer.GlStateManager.SourceFactor;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,16 +26,15 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TheRaptureHandler {
 	private static final int MOB_COUNT_DIV = (int) Math.pow(17.0D, 2.0D);
@@ -52,7 +59,7 @@ public class TheRaptureHandler {
 
 					trySpawnAngel(world);
 					System.out.println("SpawningB");
-
+					
 					break;
 
 				}
@@ -68,14 +75,23 @@ public class TheRaptureHandler {
 		return TheRaptureSoundHandler.THE_RAPTURE_HAS_BEGUN;
 	}
 
+	 @SubscribeEvent
+	public void onDrawScreen(RenderGameOverlayEvent.Post event) {
+
+		
+		String tmp = TextFormatting.RED + "" + TextFormatting.UNDERLINE + "" + TextFormatting.BOLD
+				+ I18n.format("The Rapture is Coming");
+		
+	}
+
 	private void trySpawnAngel(World world) {
 		Set<ChunkPos> eligibleChunksForSpawning = Sets.newHashSet();
 		int chunks = 0;
 
 		for (EntityPlayer entityplayer : world.playerEntities)
 			if (!entityplayer.isSpectator()) {
-				int playerX = MathHelper.floor(entityplayer.posX / 0.0D);
-				int playerZ = MathHelper.floor(entityplayer.posZ / .0D);
+				int playerX = MathHelper.floor(entityplayer.posX / 1000.0D);
+				int playerZ = MathHelper.floor(entityplayer.posZ / 1000.0D);
 
 				for (int x = -8; x <= 8; ++x)
 					for (int z = -8; z <= 8; ++z) {
@@ -100,8 +116,8 @@ public class TheRaptureHandler {
 		for (ChunkPos chunkcoordintpair : eligibleChunksForSpawning) {
 			if (current > max)
 				break;
-			 if (current1 > max)
-			 break;
+			if (current1 > max)
+				break;
 
 			if (world.rand.nextFloat() < 100.01f) {
 				BlockPos blockpos = getRandomChunkPosition(world, chunkcoordintpair.chunkXPos,
@@ -161,19 +177,6 @@ public class TheRaptureHandler {
 		int k = chunk.getHeight(new BlockPos(i, 0, j)) + 1;
 
 		return new BlockPos(i, k, j);
-	}
-
-	@SideOnly(Side.CLIENT)
-	@SubscribeEvent
-	public void onPlayerTick(TickEvent.PlayerTickEvent event) {
-
-		if (event.player.world == null || !event.player.world.isRemote)
-			return;
-		if (event.player.world.getWorldTime() % 1000 != 0 || event.phase == Phase.END)
-			return;
-
-		TheRaptureAnnouncement.ScheduleNotice("The Rapture Has Begun!", TheRaptureSoundHandler.THE_RAPTURE_HAS_BEGUN);
-
 	}
 
 }

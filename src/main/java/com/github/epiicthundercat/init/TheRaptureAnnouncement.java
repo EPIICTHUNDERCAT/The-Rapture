@@ -1,6 +1,7 @@
 package com.github.epiicthundercat.init;
 /**
- * ALL CREDIT GOES TO RAIDERS MOD ANNOUNCEMENT!
+ * 
+ * 
  * 
  */
 import java.awt.Color;
