@@ -7,22 +7,22 @@ import com.github.epiicthundercat.entity.monster.EntityFallenAngel;
 import com.google.common.collect.Sets;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGameOver;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.network.play.server.SPacketSoundEffect;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.client.event.GuiScreenEvent.DrawScreenEvent;
 import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
@@ -37,7 +37,15 @@ public class TheRaptureHandler {
 	@SubscribeEvent
 	public void onTick(TickEvent.WorldTickEvent event) {
 		World world = event.world;
-
+		for(Entity e : world.loadedEntityList) {
+			if(e instanceof EntityPlayerMP)
+			{
+			        EntityPlayerMP player = (EntityPlayerMP) e;
+			player.connection.sendPacket(new SPacketSoundEffect(getSound(), SoundCategory.MASTER, player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ(), 1F, 1F));
+			}
+			}
+		
+		
 		if (event.phase == TickEvent.Phase.END && world.provider.getDimension() == 0) {
 			if (this.ticks % (10 * 20) == 0) {
 				Random random = new Random();
@@ -46,9 +54,7 @@ public class TheRaptureHandler {
 
 					trySpawnAngel(world);
 					System.out.println("SpawningB");
-					TheRaptureAnnouncement.ScheduleNotice("The Rapture Has Begun!",
-							TheRaptureSoundHandler.THE_RAPTURE_HAS_BEGUN);
-
+					
 					break;
 
 				}
@@ -60,6 +66,14 @@ public class TheRaptureHandler {
 		}
 	}
 
+	
+	
+
+		public static SoundEvent getSound() {
+		return TheRaptureSoundHandler.THE_RAPTURE_HAS_BEGUN;
+		}
+	
+	
 	private void trySpawnAngel(World world) {
 		Set<ChunkPos> eligibleChunksForSpawning = Sets.newHashSet();
 		int chunks = 0;

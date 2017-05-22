@@ -138,7 +138,7 @@ public class ModelFallenAngel extends ModelBase {
 		super.setRotationAngles(f, f1, f2, f3, f4, f5, entity);
 		EntityFallenAngel angel = (EntityFallenAngel) entity;
 		// f = entity.ticksExisted;
-		// f1 = 0.5f;
+	 //f1 = 0.5f;
 		float globalSpeed = 1.0f;
 		float globalDegree = 1.0f;
 		float globalHeight = 1.0f;
@@ -149,14 +149,14 @@ public class ModelFallenAngel extends ModelBase {
 		walk(rightArm, 0.5f * globalSpeed, 1f * globalDegree, false, -5.5f, 0.5f, f, f1);
 		walk(leftArm, 0.5f * globalSpeed, 1f * globalDegree, false, -2f, 0.0f, f, f1);
 
-		swing(wingBoneBase_1, 0.5f * globalSpeed, 1f * globalDegree, -8f, -180f, f, f1);
-		swing(wingBoneBase, 0.5f * globalSpeed, 1f * globalDegree, -8f, 0f, f, f1);
+		swing(wingBoneBase_1, 0.5f * globalSpeed, 0.5f * globalDegree, -10f, 1f, f, f1);
+		swing(wingBoneBase, 0.5f * globalSpeed, 0.5f * globalDegree, -10f, -1f, f, f1);
 
-		swing(wingBoneSecond_1, 0.5f * globalSpeed, -1f * globalDegree, 0f, -2.8f, f, f1);
-		swing(wingBoneSecond, 0.5f * globalSpeed, -1f * globalDegree, 0f, 2f, f, f1);
+		swing(wingBoneSecond_1, 0.5f * globalSpeed, 0.5f * globalDegree, 10f, -1.5f, f, f1);
+		swing(wingBoneSecond, 0.5f * globalSpeed, 0.5f * globalDegree, 10f, 1.5f, f, f1);
 
-		swing(wingBoneThird_1, 0.5f * globalSpeed, -1f * globalDegree, 0f, 10f, f, f1);
-		swing(wingBoneThird, 0.5f * globalSpeed, -1f * globalDegree, 0f, -10f, f, f1);
+		swing(wingBoneThird_1, 0.5f * globalSpeed, 0.5f * globalDegree, -10f, -2f, f, f1);
+		swing(wingBoneThird, 0.5f * globalSpeed, 0.5f * globalDegree, -10f, 2f, f, f1);
 
 		walk(head, 0.5f * globalSpeed, 1f * globalDegree, false, 0f, 0f, f, f1);
 		bob(head, 1.0F * globalSpeed, 0.5F * globalHeight, 1, 1, f, f1);
