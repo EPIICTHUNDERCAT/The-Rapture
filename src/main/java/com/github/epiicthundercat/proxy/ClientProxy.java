@@ -1,7 +1,9 @@
 package com.github.epiicthundercat.proxy;
 
+import com.github.epiicthundercat.client.render.RenderDemon;
 import com.github.epiicthundercat.client.render.RenderFallenAngel;
 import com.github.epiicthundercat.entity.ModEntities;
+import com.github.epiicthundercat.entity.monster.EntityDemon;
 import com.github.epiicthundercat.entity.monster.EntityFallenAngel;
 import com.github.epiicthundercat.init.TRItems;
 
@@ -24,6 +26,7 @@ public class ClientProxy extends CommonProxy{
 
 		RenderManager rm = Minecraft.getMinecraft().getRenderManager();
 		rm.entityRenderMap.put(EntityFallenAngel.class, new RenderFallenAngel(rm));
+		rm.entityRenderMap.put(EntityDemon.class, new RenderDemon(rm));
 		
 	}
 	@Override

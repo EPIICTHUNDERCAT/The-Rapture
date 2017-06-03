@@ -3,9 +3,9 @@ package com.github.epiicthundercat.init;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.epiicthundercat.item.TRItem;
 import com.github.epiicthundercat.item.TRItemSword;
 
-import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -22,6 +22,9 @@ public class TRItems {
 	public static List<Item> items = new ArrayList();
 	
 	public static Item unholy_sword = new TRItemSword("unholy_sword", ToolMaterial.DIAMOND);
+	public static Item demon_staff = new TRItemSword("demon_staff", ToolMaterial.DIAMOND);
+	
+	public static Item demon_heart = new TRItem("demon_heart");
 	
 	
 	

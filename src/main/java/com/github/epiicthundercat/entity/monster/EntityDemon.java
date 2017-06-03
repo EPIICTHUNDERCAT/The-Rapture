@@ -30,7 +30,6 @@ import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -48,21 +47,21 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class EntityFallenAngel extends EntityMob {
+public class EntityDemon extends EntityMob {
 
 	private static final DataParameter<Boolean> SWINGING_ARMS = EntityDataManager
 			.<Boolean>createKey(AbstractSkeleton.class, DataSerializers.BOOLEAN);
 	private final EntityAIAttackMelee aiAttackOnCollide = new EntityAIAttackMelee(this, 1.2D, false);
 
-	public EntityFallenAngel(World worldIn) {
+	public EntityDemon(World worldIn) {
 		super(worldIn);
 		this.setSize(0.7F, 2.4F);
 		this.isImmuneToFire = true;
-		this.setCombatTask();
+		
 	}
 
 	public static void registerFixesFallenAngel(DataFixer fixer) {
-		EntityLiving.registerFixesMob(fixer, EntityFallenAngel.class);
+		EntityLiving.registerFixesMob(fixer, EntityDemon.class);
 	}
 
 	/**
@@ -76,7 +75,7 @@ public class EntityFallenAngel extends EntityMob {
 
 			if (entitycreeper.getPowered() && entitycreeper.isAIEnabled()) {
 				entitycreeper.incrementDroppedSkulls();
-				this.entityDropItem(new ItemStack(Items.NETHER_STAR), 0.0F);
+				this.entityDropItem(new ItemStack(TRItems.demon_heart), 0.0F);
 			}
 		}
 	}
@@ -85,7 +84,7 @@ public class EntityFallenAngel extends EntityMob {
 	 * Gives armor or weapon for entity based on given DifficultyInstance
 	 */
 	protected void setEquipmentBasedOnDifficulty(DifficultyInstance difficulty) {
-		this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(TRItems.unholy_sword));
+		this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(TRItems.demon_staff));
 	}
 
 	/**
@@ -103,8 +102,7 @@ public class EntityFallenAngel extends EntityMob {
 			return false;
 		} else {
 			if (entityIn instanceof EntityLivingBase) {
-				((EntityLivingBase) entityIn).addPotionEffect(new PotionEffect(MobEffects.WITHER, 200));
-			}
+				setFire(900);	}
 
 			return true;
 		}
@@ -193,17 +191,7 @@ public class EntityFallenAngel extends EntityMob {
 		super.onLivingUpdate();
 	}
 
-	/**
-	 * Handles updating while being ridden by an entity
-	 */
-	public void updateRidden() {
-		super.updateRidden();
 
-		if (this.getRidingEntity() instanceof EntityCreature) {
-			EntityCreature entitycreature = (EntityCreature) this.getRidingEntity();
-			this.renderYawOffset = entitycreature.renderYawOffset;
-		}
-	}
 
 	/**
 	 * Called only once on an entity when first time spawned, via egg, mob
@@ -215,7 +203,7 @@ public class EntityFallenAngel extends EntityMob {
 		livingdata = super.onInitialSpawn(difficulty, livingdata);
 		this.setEquipmentBasedOnDifficulty(difficulty);
 		this.setEnchantmentBasedOnDifficulty(difficulty);
-		this.setCombatTask();
+	
 		this.setCanPickUpLoot(this.rand.nextFloat() < 0.55F * difficulty.getClampedAdditionalDifficulty());
 
 		if (this.getItemStackFromSlot(EntityEquipmentSlot.HEAD).isEmpty()) {
@@ -231,52 +219,19 @@ public class EntityFallenAngel extends EntityMob {
 		return livingdata;
 	}
 
-	/**
-	 * sets this entity's combat AI.
-	 */
-	public void setCombatTask() {
-		if (this.world != null && !this.world.isRemote) {
-			this.tasks.removeTask(this.aiAttackOnCollide);
 
-			ItemStack itemstack = this.getHeldItemMainhand();
-
-			if (itemstack.getItem() == Items.BOW) {
-				int i = 20;
-
-				if (this.world.getDifficulty() != EnumDifficulty.HARD) {
-					i = 40;
-				}
-
-			} else {
-				this.tasks.addTask(4, this.aiAttackOnCollide);
-			}
-		}
-	}
-
-	protected EntityArrow getArrow(float p_190726_1_) {
-		EntityTippedArrow entitytippedarrow = new EntityTippedArrow(this.world, this);
-		entitytippedarrow.setEnchantmentEffectsFromEntity(this, p_190726_1_);
-		return entitytippedarrow;
-	}
 
 	/**
 	 * (abstract) Protected helper method to read subclass entity data from NBT.
 	 */
 	public void readEntityFromNBT(NBTTagCompound compound) {
 		super.readEntityFromNBT(compound);
-		this.setCombatTask();
+
 	}
 
 	public void setItemStackToSlot(EntityEquipmentSlot slotIn, ItemStack stack) {
 		super.setItemStackToSlot(slotIn, stack);
 
-		if (!this.world.isRemote && slotIn == EntityEquipmentSlot.MAINHAND) {
-			this.setCombatTask();
-		}
 	}
-	 public int getMaxSpawnedInChunk()
-	    {
-	        return 2;
-	    }
 
 }
