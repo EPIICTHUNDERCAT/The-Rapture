@@ -45,10 +45,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class EntityFallenAngel extends EntityMob {
+public class EntityFallenAngel extends Monster {
 
 	private static final DataParameter<Boolean> SWINGING_ARMS = EntityDataManager
 			.<Boolean>createKey(AbstractSkeleton.class, DataSerializers.BOOLEAN);
