@@ -85,12 +85,12 @@ public class TheRaptureAnnouncement {
 		GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
      	
 		String tmp = TextFormatting.RED + "" + TextFormatting.UNDERLINE + "" + TextFormatting.BOLD + I18n.format(notice.mainTxt);
-		int txtW = mc.fontRendererObj.getStringWidth(tmp);
-		mc.fontRendererObj.drawString(tmp, width/2 - txtW/2, height/4, color, true);
+		int txtW = mc.fontRenderer.getStringWidth(tmp);
+		mc.fontRenderer.drawString(tmp, width/2 - txtW/2, height/4, color, true);
 		
 		tmp = TextFormatting.YELLOW + "" + I18n.format(notice.subTxt);
-		txtW = mc.fontRendererObj.getStringWidth(tmp);
-		mc.fontRendererObj.drawString(tmp, width/2 - txtW/2, height/4 + 12, color, true);
+		txtW = mc.fontRenderer.getStringWidth(tmp);
+		mc.fontRenderer.drawString(tmp, width/2 - txtW/2, height/4 + 12, color, true);
 		
 		//GlStateManager.disableBlend();
 		GlStateManager.popMatrix();

@@ -1,6 +1,8 @@
 package com.github.epiicthundercat;
 
-import com.github.epiicthundercat.Reference;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Logger;
+
 import com.github.epiicthundercat.proxy.CommonProxy;
 
 import net.minecraftforge.fml.common.Mod;

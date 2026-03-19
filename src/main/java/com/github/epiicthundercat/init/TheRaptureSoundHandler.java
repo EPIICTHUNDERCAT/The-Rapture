@@ -7,17 +7,20 @@ import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public enum TheRaptureSoundHandler {
-	  INSTANCE;
-	public static final SoundEvent FALLEN_ANGEL_HURT = create("fallen_angel_hurt");
-	public static final SoundEvent FALLEN_ANGEL_AMBIENT = create("fallen_angel_ambient");
-	public static final SoundEvent FALLEN_ANGEL_DEATH = create("fallen_angel_death");
-	public static final SoundEvent THE_RAPTURE_HAS_BEGUN = create("the_rapture_has_begun");
-	
-	
-	 public void onInit() {}
-	
-	public static SoundEvent create(String name) {
-		ResourceLocation id = new ResourceLocation(Reference.ID, name);
-        return GameRegistry.register(new SoundEvent(id).setRegistryName(id));
-    }
+	INSTANCE;
+	public static final SoundEvent FALLEN_ANGEL_HURT = registerSound("fallen_angel_hurt", Reference.ID);
+	public static final SoundEvent FALLEN_ANGEL_AMBIENT = registerSound("fallen_angel_ambient", Reference.ID);
+	public static final SoundEvent FALLEN_ANGEL_DEATH = registerSound("fallen_angel_death", Reference.ID);
+	public static final SoundEvent THE_RAPTURE_HAS_BEGUN = registerSound("the_rapture_has_begun", Reference.ID);
+
+	public void onInit() {
+	}
+
+	public static SoundEvent registerSound(String name, String modid) {
+		ResourceLocation location = new ResourceLocation(modid, name);
+		final SoundEvent event = new SoundEvent(location).setRegistryName(location);
+		GameRegistry.findRegistry(SoundEvent.class).register(event);
+		return event;
+
+	}
 }

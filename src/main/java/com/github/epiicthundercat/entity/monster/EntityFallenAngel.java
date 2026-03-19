@@ -1,11 +1,14 @@
 package com.github.epiicthundercat.entity.monster;
 
 import java.util.Calendar;
+import java.util.Random;
 
 import javax.annotation.Nullable;
 
+import com.github.epiicthundercat.init.HelpfulSettings;
 import com.github.epiicthundercat.init.TRItems;
 import com.github.epiicthundercat.init.TheRaptureSoundHandler;
+import com.github.epiicthundercat.utils.ConfigHandler;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
@@ -19,6 +22,7 @@ import net.minecraft.entity.ai.EntityAILookIdle;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.monster.AbstractSkeleton;
 import net.minecraft.entity.monster.EntityCreeper;
@@ -30,7 +34,6 @@ import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -42,6 +45,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.datafix.DataFixer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
@@ -53,6 +57,7 @@ public class EntityFallenAngel extends EntityMob {
 	private static final DataParameter<Boolean> SWINGING_ARMS = EntityDataManager
 			.<Boolean>createKey(AbstractSkeleton.class, DataSerializers.BOOLEAN);
 	private final EntityAIAttackMelee aiAttackOnCollide = new EntityAIAttackMelee(this, 1.2D, false);
+	private static final Random random = new Random();
 
 	public EntityFallenAngel(World worldIn) {
 		super(worldIn);
@@ -71,13 +76,11 @@ public class EntityFallenAngel extends EntityMob {
 	public void onDeath(DamageSource cause) {
 		super.onDeath(cause);
 
-		if (cause.getEntity() instanceof EntityCreeper) {
-			EntityCreeper entitycreeper = (EntityCreeper) cause.getEntity();
-
-			if (entitycreeper.getPowered() && entitycreeper.isAIEnabled()) {
-				entitycreeper.incrementDroppedSkulls();
-				this.entityDropItem(new ItemStack(Items.NETHER_STAR), 0.0F);
-			}
+		if (cause.getTrueSource() instanceof EntityCreeper && cause.getTrueSource() != this
+				&& ((EntityCreeper) cause.getTrueSource()).getPowered()
+				&& ((EntityCreeper) cause.getTrueSource()).ableToCauseSkullDrop()) {
+			((EntityCreeper) cause.getTrueSource()).incrementDroppedSkulls();
+			this.entityDropItem(new ItemStack(Items.NETHER_STAR), 0.0F);
 		}
 	}
 
@@ -156,13 +159,16 @@ public class EntityFallenAngel extends EntityMob {
 	}
 
 	/**
-	 * Called frequently so the entity can update its state every tick as
-	 * required. For example, zombies and skeletons use this to react to
-	 * sunlight and start to burn.
+	 * Called frequently so the entity can update its state every tick as required.
+	 * For example, zombies and skeletons use this to react to sunlight and start to
+	 * burn.
 	 */
+	@Override
 	public void onLivingUpdate() {
+
 		if (this.world.isDaytime() && !this.world.isRemote) {
-			float f = this.getBrightness(1.0F);
+
+			float f = this.getBrightness();
 			BlockPos blockpos = this.getRidingEntity() instanceof EntityBoat
 					? (new BlockPos(this.posX, (double) Math.round(this.posY), this.posZ)).up()
 					: new BlockPos(this.posX, (double) Math.round(this.posY), this.posZ);
@@ -189,7 +195,13 @@ public class EntityFallenAngel extends EntityMob {
 				}
 			}
 		}
+		if (!this.world.isDaytime() && !this.world.isRemote && this.getHealth() <= ConfigHandler.healthAngelSpawning) {
+			BlockPos blockpos1 = this.getPosition();
+			HelpfulSettings.summonEntitiesAroundPos(EntityFallenAngel.class, world, blockpos1,
+					ConfigHandler.radiousAngelsCanSpawn, ConfigHandler.minAngelSpawns, ConfigHandler.maxAngelSpawns,
+					ConfigHandler.spawnIgnoresLight);
 
+		}
 		super.onLivingUpdate();
 	}
 
@@ -206,12 +218,15 @@ public class EntityFallenAngel extends EntityMob {
 	}
 
 	/**
-	 * Called only once on an entity when first time spawned, via egg, mob
-	 * spawner, natural spawning etc, but not called when entity is reloaded
-	 * from nbt. Mainly used for initializing attributes and inventory
+	 * Called only once on an entity when first time spawned, via egg, mob spawner,
+	 * natural spawning etc, but not called when entity is reloaded from nbt. Mainly
+	 * used for initializing attributes and inventory
 	 */
 	@Nullable
 	public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata) {
+		BlockPos blockpos1 = this.getPosition();
+		summonLightningOnMe(world, this, blockpos1, 1, 0, 1);
+		this.spawnExplosionParticle();
 		livingdata = super.onInitialSpawn(difficulty, livingdata);
 		this.setEquipmentBasedOnDifficulty(difficulty);
 		this.setEnchantmentBasedOnDifficulty(difficulty);
@@ -274,9 +289,46 @@ public class EntityFallenAngel extends EntityMob {
 			this.setCombatTask();
 		}
 	}
-	 public int getMaxSpawnedInChunk()
-	    {
-	        return 2;
-	    }
+
+	public static void summonLightningOnMe(World world, Entity entity, BlockPos sourcePos, int radius, int minAmount,
+			int maxAmount) {
+
+		EntityFallenAngel angel = new EntityFallenAngel(world);
+		for (int i = 0; i < 20 + world.rand.nextInt(3); i++) {
+
+			switch (world.rand.nextInt(4)) {
+			case 0: {
+				entity = new EntityLightningBolt(world, angel.posX, angel.posY, angel.posZ, true);
+
+				break;
+			}
+
+			}
+			int minRadius = 2 + (int) (radius * 0.1F);
+			if (minRadius >= radius)
+				minRadius = (int) (radius * 0.1F);
+			for (int count = 0; count < MathHelper.getInt(random, minAmount, maxAmount); count++) {
+				for (int l = 0; l < 2; ++l) {
+					int i1 = sourcePos.getX()
+							+ MathHelper.getInt(random, minRadius, radius) * MathHelper.getInt(random, -1, 1);
+					int j1 = sourcePos.getY()
+							+ MathHelper.getInt(random, minRadius, radius) * MathHelper.getInt(random, -1, 1);
+					int k1 = sourcePos.getZ()
+							+ MathHelper.getInt(random, minRadius, radius) * MathHelper.getInt(random, -1, 1);
+					if (world.getBlockState(new BlockPos(i1, j1 - 1, k1)).isSideSolid(world,
+							new BlockPos(i1, j1 - 1, k1), net.minecraft.util.EnumFacing.UP)
+							&& (world.getLightFromNeighbors(new BlockPos(i1, j1, k1)) < 10)) {
+						entity.setPosition(i1, j1, k1);
+						world.spawnEntity(entity);
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	public int getMaxSpawnedInChunk() {
+		return 2;
+	}
 
 }

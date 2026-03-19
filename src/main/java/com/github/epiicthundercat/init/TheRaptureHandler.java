@@ -42,7 +42,7 @@ public class TheRaptureHandler {
 				Random random = new Random();
 				switch (random.nextInt(1)) {
 				case 0:
-					System.out.println("gogogo");
+					//System.out.println("gogogo");
 					TheRaptureAnnouncement.ScheduleNotice("Raid Difficulty ", "Raiders have gotten harder!",
 							TheRaptureSoundHandler.THE_RAPTURE_HAS_BEGUN.getRegistryName().toString());
 
@@ -90,7 +90,7 @@ public class TheRaptureHandler {
 		BlockPos spawnPoint = world.getSpawnPoint();
 		int current = world.countEntities(EntityLightningBolt.class);
 		int current1 = world.countEntities(EntityFallenAngel.class);
-		int max = 5 * chunks / MOB_COUNT_DIV;
+		int max = 90 * chunks / MOB_COUNT_DIV;
 
 		for (ChunkPos chunkcoordintpair : eligibleChunksForSpawning) {
 			if (current > max)
@@ -99,8 +99,8 @@ public class TheRaptureHandler {
 				break;
 
 			if (world.rand.nextFloat() < 100.01f) {
-				BlockPos blockpos = getRandomChunkPosition(world, chunkcoordintpair.chunkXPos,
-						chunkcoordintpair.chunkZPos);
+				BlockPos blockpos = getRandomChunkPosition(world, chunkcoordintpair.x,
+						chunkcoordintpair.z);
 				BlockPos waterBlock = null;
 				int r = 4;
 
@@ -110,7 +110,7 @@ public class TheRaptureHandler {
 							BlockPos check = new BlockPos(blockpos.getX() + x, blockpos.getY() + y,
 									blockpos.getZ() + z);
 							Block block = world.getBlockState(check).getBlock();
-							if (block == Blocks.SANDSTONE) {
+							if (block == Blocks.GRASS) {
 								waterBlock = check;
 								break;
 							}
